@@ -1,66 +1,57 @@
-
-<definitions targetNamespace="http://homework2/" name="PizzaPriceServiceImpService" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:wsp1_2="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://homework2/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/wsdl/">
-   <types>
-      <xsd:schema>
-         <xsd:import namespace="http://homework2/" schemaLocation="http://127.0.0.1:8001/Price?xsd=1"/>
-      </xsd:schema>
-   </types>
-   <message name="getPizzaPrice">
-      <part name="parameters" element="tns:getPizzaPrice"/>
-   </message>
-   <message name="getPizzaPriceResponse">
-      <part name="parameters" element="tns:getPizzaPriceResponse"/>
-   </message>
-   
-
-   <message name="updatePizzaPrice">
-      <part name="parameters" element="tns:updatePizzaPrice"/>
-   </message>
-   <message name="updatePizzaPriceResponse">
-      <part name="parameters" element="tns:updatePizzaPriceResponse"/>
-   </message>
-   
-   <portType name="PizzaPriceService">
-      <operation name="getPizzaPrice">
-         <input wsam:Action="http://homework2/PizzaPriceService/getPizzaPriceRequest" message="tns:getPizzaPrice"/>
-         <output wsam:Action="http://homework2/PizzaPriceService/getPizzaPriceResponse" message="tns:getPizzaPriceResponse"/>
-      </operation>
-      
-
-      <operation name="updatePizzaPrice">
-         <input wsam:Action="http://homework2/PizzaPriceService/updatePizzaPriceRequest" message="tns:updatePizzaPrice"/>
-         <output wsam:Action="http://homework2/PizzaPriceService/updatePizzaPriceResponse" message="tns:updatePizzaPriceResponse"/>
-      </operation>
-   </portType>
-   
-   <binding name="PizzaPriceServiceImpPortBinding" type="tns:PizzaPriceService">
-      <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
-      
-      <operation name="getPizzaPrice">
-         <soap:operation soapAction=""/>
-         <input>
-            <soap:body use="literal"/>
-         </input>
-         <output>
-            <soap:body use="literal"/>
-         </output>
-      </operation>
-      
-
-      <operation name="updatePizzaPrice">
-         <soap:operation soapAction=""/>
-         <input>
-            <soap:body use="literal"/>
-         </input>
-         <output>
-            <soap:body use="literal"/>
-         </output>
-      </operation>
-   </binding>
-   
-   <service name="PizzaPriceServiceImpService">
-      <port name="PizzaPriceServiceImpPort" binding="tns:PizzaPriceServiceImpPortBinding">
-         <soap:address location="http://127.0.0.1:8001/Price"/>
-      </port>
-   </service>
+<definitions
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:tns="http://soap.patriktrefil.com/"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    targetNamespace="http://homework2/">
+    <types>
+        <xs:schema>
+            <xs:schema targetNamespace="http://homework2/">
+                <xs:element name="getPizzaPrice">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="pizzaType" type="xs:string" minOccurs="0" maxOccurs="1" />
+                            <xs:element name="size" type="xs:int" minOccurs="0" maxOccurs="1" />
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="getPizzaPriceResponse">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="return" type="xs:double" />
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:schema>
+        </xs:schema>
+    </types>
+    <message name="getPizzaPriceMsg">
+        <part name="parameters" element="tns:getPizzaPrice" />
+    </message>
+    <message name="getPizzaPriceResponseMsg">
+        <part name="parameters" element="tns:getPizzaPriceResponse" />
+    </message>
+    <portType name="PizzaPriceService">
+        <operation name="getPizzaPriceOperation">
+            <input message="tns:getPizzaPriceMsg" />
+            <output message="tns:getPizzaPriceResponseMsg" />
+        </operation>
+    </portType>
+    <binding name="PizzaPriceServiceBinding" type="tns:PizzaPriceService">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document" />
+        <operation name="getPizzaPriceOperation">
+            <soap:operation soapAction="" />
+            <input>
+                <soap:body use="literal" />
+            </input>
+            <output>
+                <soap:body use="literal" />
+            </output>
+        </operation>
+    </binding>
+    <service>
+        <port binding="tns:PizzaPriceServiceBinding">
+            <soap:address location="http://127.0.0.1:8001/Price" />
+        </port>
+    </service>
 </definitions>
