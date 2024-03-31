@@ -1,0 +1,36 @@
+<xs:schema xmlns:tns="http://pizzaPrice/" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="unqualified" targetNamespace="http://pizzaPrice/" version="1.0">
+
+  <xs:element name="getPizzaPrice" type="tns:getPizzaPrice"/>
+
+  <xs:element name="getPizzaPriceResponse" type="tns:getPizzaPriceResponse"/>
+
+  <xs:element name="getPizzaSpecialOffers" type="tns:getPizzaSpecialOffers"/>
+
+  <xs:element name="getPizzaSpecialOffersResponse" type="tns:getPizzaSpecialOffersResponse"/>
+
+  <xs:complexType name="getPizzaSpecialOffers">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="getPizzaSpecialOffersResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="getPizzaPrice">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+      <xs:element name="arg1" type="xs:int"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="getPizzaPriceResponse">
+    <xs:sequence>
+      <xs:element name="return" type="xs:double"/>
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>

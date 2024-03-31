@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="PizzaPriceServiceImpService" targetNamespace="http://pizzaPrice/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://pizzaPrice/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <wsdl:types>
+    <schema xmlns="http://www.w3.org/2001/XMLSchema">
+  <import namespace="http://pizzaPrice/" schemaLocation="pizzapriceserviceimp_schema1.xsd"/>
+</schema>
+  </wsdl:types>
+  <wsdl:message name="getPizzaPrice">
+    <wsdl:part name="parameters" element="tns:getPizzaPrice">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getPizzaSpecialOffersResponse">
+    <wsdl:part name="parameters" element="tns:getPizzaSpecialOffersResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getPizzaPriceResponse">
+    <wsdl:part name="parameters" element="tns:getPizzaPriceResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getPizzaSpecialOffers">
+    <wsdl:part name="parameters" element="tns:getPizzaSpecialOffers">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="PizzaPriceService">
+    <wsdl:operation name="getPizzaSpecialOffers">
+      <wsdl:input name="getPizzaSpecialOffers" message="tns:getPizzaSpecialOffers">
+    </wsdl:input>
+      <wsdl:output name="getPizzaSpecialOffersResponse" message="tns:getPizzaSpecialOffersResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getPizzaPrice">
+      <wsdl:input name="getPizzaPrice" message="tns:getPizzaPrice">
+    </wsdl:input>
+      <wsdl:output name="getPizzaPriceResponse" message="tns:getPizzaPriceResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="PizzaPriceServiceImpServiceSoapBinding" type="tns:PizzaPriceService">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="getPizzaSpecialOffers">
+      <soap:operation soapAction="urn:GetPizzaSpecialOffers" style="document"/>
+      <wsdl:input name="getPizzaSpecialOffers">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getPizzaSpecialOffersResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getPizzaPrice">
+      <soap:operation soapAction="urn:GetPizzaPrice" style="document"/>
+      <wsdl:input name="getPizzaPrice">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getPizzaPriceResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="PizzaPriceServiceImpService">
+    <wsdl:port name="PizzaPriceServiceImpPort" binding="tns:PizzaPriceServiceImpServiceSoapBinding">
+      <soap:address location="http://localhost:8080/cxf/services/PizzaPriceServiceImpPort"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
