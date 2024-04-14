@@ -1,6 +1,6 @@
 <definitions
     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
-    xmlns:tns="http://soap.patriktrefil.com/"
+    xmlns:tns="http://homework2/"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns="http://schemas.xmlsoap.org/wsdl/"
     targetNamespace="http://homework2/">
