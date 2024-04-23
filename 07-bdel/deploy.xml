@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<deploy 
+    xmlns="http://www.apache.org/ode/schemas/dd/2007/03"
+    xmlns:tnsbpel="http://nswi145/PizzaProcess/bpel"
+    xmlns:tnswsdl="http://nswi145/PizzaProcess/wsdl"
+    xmlns:calc="http://tempuri.org/"
+    xmlns:rec="http://homework2/"
+  >
+
+  <process name="tnsbpel:PizzaProcess">
+    <active>true</active>
+
+    <provide partnerLink="PizzaProcessLink">
+      <service name="tnswsdl:PizzaProcess" port="PizzaPricePort" />
+    </provide>
+      
+      <invoke partnerLink="MultiplyLink">
+        <service name="calc:Calculator" port="CalculatorSoap" />
+      </invoke>
+      <invoke partnerLink="MultiplyLink">
+        <service name="calc:Calculator" port="CalculatorSoap" />
+      </invoke>
+        <invoke partnerLink="AddLink">
+          <service name="calc:Calculator" port="CalculatorSoap" />
+        </invoke>
+
+
+    <provide partnerLink="MultiplyLink">
+      <service name="tnswsdl:PizzaProcess" port="MultPort" />
+    </provide>
+    <provide partnerLink="AddLink">
+      <service name="tnswsdl:PizzaProcess" port="AddPort" />
+    </provide>
+
+
+  
+  </process>
+
+</deploy>

@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="PizzaProcess"
+    targetNamespace="http://nswi145/PizzaProcess/bpel" 
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:tns="http://nswi145/PizzaProcess/bpel"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tnswsdl="http://nswi145/PizzaProcess/wsdl"
+    xmlns:tnsxsd="http://nswi145/PizzaProcess/xsd"
+    xmlns:calc="http://tempuri.org/"
+    xmlns:rec="http://homework2/"
+    queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath2.0"
+    expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath2.0">
+
+  <import location="CalcProcess.wsdl"
+      namespace="http://nswi145/PizzaProcess/wsdl"
+      importType="http://schemas.xmlsoap.org/wsdl/" />
+
+  <partnerLinks>
+    <partnerLink name="PizzaProcessPartnerLink" 
+        partnerLinkType="tnswsdl:PizzaProcessLinkType" 
+        myRole="PizzaProcessExecutorRole" />
+    <partnerLink name="MultiplyLink" 
+        partnerLinkType="tnswsdl:MultiplyLinkType" 
+        myRole="MultiplierClientRole" 
+        partnerRole="MultiplierRole"/>
+    <partnerLink name="AddLink" 
+        partnerLinkType="tnswsdl:AddLinkType" 
+        myRole="AdderClientRole" 
+        partnerRole="AdderRole"/>
+      <partnerLink name="makePizzaLink" 
+        partnerLinkType="tnswsdl:getPizzaPriceLinkType" 
+        myRole="getPizzaPriceerClientRole" 
+        partnerRole="getPizzaPriceerRole"/>
+
+  <variables>
+    <variable name="inputMessage" messageType="tnswsdl:PizzaPriceInputMessage" />
+    <variable name="inputMessageCopy" messageType="tnswsdl:PizzaPriceInputMessage" />
+    <variable name="PizzaType" type="xsd:string" />
+    <variable name="discount" type="xsd:double" />
+    <variable name="tax" type="xsd:double" />
+    <variable name="priceResponse" type="xsd:double" />
+
+    <variable name="finalPrice" type="xsd:double" />
+
+    <variable name="multiRequestElement1" element="calc:Multiply" />
+    <variable name="multiRequest1" messageType="calc:MultiplySoapIn" />
+    <variable name="multiResponse1" messageType="calc:MultiplySoapOut" />
+    <variable name="multiResponseElement1" element="calc:MultiplyResponse" />
+    
+    <variable name="multiRequestElement2" element="calc:Multiply" />
+    <variable name="multiRequest2" messageType="calc:MultiplySoapIn" />
+    <variable name="multiResponse2" messageType="calc:MultiplySoapOut" />
+    <variable name="multiResponseElement2" element="calc:MultiplyResponse" />
+
+    <variable name="addend1" type="xsd:double" />
+    <variable name="addend2" type="xsd:double" />
+
+    <variable name="addRequestElement" element="calc:Add" />
+    <variable name="addRequest" messageType="calc:AddSoapIn" />
+    <variable name="addResponse" messageType="calc:AddSoapOut" />
+    <variable name="addResponseElement" element="calc:AddResponse" />
+  
+    <variable name="getPizzaPriceRequestElement" element="rec:getPizzaPrice" />
+    <variable name="priceResponseElement1" element="rec:getPizzaPrice" />
+    <variable name="getPizzaPriceRequest" messageType="rec:getPizzaPrice" />
+    <variable name="getPizzaPriceResponse" messageType="rec:getPizzaPriceResponse" />
+    <variable name="getPizzaPriceResponseElement" element="rec:getPizzaPriceResponse" />
+
+    <variable name="outputMessage" messageType="tnswsdl:PizzaPriceOutputMessage" />
+  </variables>
+  
+  <flow>
+    <links>
+      <link name="discountedPricesLink" />
+    </links>
+    <receive
+        name="ReceivePizzaProcessInputs"
+        partnerLink="PizzaProcessPartnerLink"
+        portType="tnswsdl:PizzaPricePortType"
+        operation="getPizzaProcess"
+        variable="inputMessage"
+        createInstance="yes" />
+    
+    <assign name="ParseInput">
+      <copy>
+        <from>
+        	<from variable="inputMessage" part="parameters"/>
+        </from>
+        <to variable="inputMessageCopy" />
+      </copy>
+      <copy>
+      	<from>$inputMessageCopy/tns:PizzaType</from>
+      	<to>$PizzaType</to>
+      </copy>
+      <copy>
+      	<from>$inputMessageCopy/tns:tax</from>
+      	<to>$tax</to>
+      </copy>
+      <copy>
+      	<from>$inputMessageCopy/tns:discount</from>
+      	<to>$discount</to>
+      </copy>
+
+
+    </assign>
+
+
+    <assign name="InitgetPizzaPriceRequest">
+        <copy>
+          <from>
+              <literal>
+                <rec:getPizzaPrice>
+                  <rec:PizzaType></rec:PizzaType>
+                </rec:getPizzaPrice>
+              </literal>
+            </from>
+          <to variable="getPizzaPriceRequestElement" />
+        </copy>
+        <copy>
+          <from>$PizzaType</from>
+          <to>$getPizzaPriceRequestElement/rec:PizzaType</to>
+        </copy>
+        <copy>
+          <from variable="getPizzaPriceRequestElement"/>
+          <to variable="getPizzaPriceRequest" part="getPizzaPrice"/>
+        </copy>
+      </assign>
+
+      <invoke
+          name="InvokegetPizzaPrice"
+          partnerLink="getPizzaPriceLinkType"
+          operation="getPizzaPrice"
+          inputVariable="getPizzaPriceRequest"
+          outputVariable="priceResponse" /> 
+
+
+
+    <assign name="ParsePriceResponse">
+    	<copy>
+    		<from variable="priceResponse" part="parameters"/>
+    		<to variable="priceResponseElement1"/>
+    	</copy>
+    	<copy>
+    		<from>$priceResponseElement1/calc:MultiplyResult</from>
+    		<to>$priceResponseElement</to>
+    	</copy>
+    </assign> 
+
+
+
+
+
+
+
+
+
+
+    <assign name="InitMultiRequest1">
+      <copy>
+        <from>
+        	<literal>
+        		<calc:Multiply>
+        			<calc:intA></calc:intA>
+        			<calc:intB></calc:intB>
+        		</calc:Multiply>
+        	</literal>
+        </from>
+        <to variable="multiRequestElement1" />
+      </copy>
+      <copy>
+      	<from>$priceResponseElement</from>
+      	<to>$multiRequestElement/calc:intA</to>
+      </copy>
+      <copy>
+      	<from>$discount</from>
+      	<to>$multiRequestElement/calc:intB</to>
+      </copy>
+      <copy>
+      	<from variable="multiRequestElement1"/>
+      	<to variable="multiRequest1" part="parameters"/>
+      </copy>
+    </assign>
+
+    <assign name="InitMultiRequest2">
+      <copy>
+        <from>
+        	<literal>
+        		<calc:Multiply>
+        			<calc:intA></calc:intA>
+        			<calc:intB></calc:intB>
+        		</calc:Multiply>
+        	</literal>
+        </from>
+        <to variable="multiRequestElement2" />
+      </copy>
+      <copy>
+      	<from>$addend1</from>
+      	<to>$addRequestElement/calc:intA</to>
+      </copy>      
+      <copy>
+      	<from>$discount</from>
+      	<to>$multiRequestElement/calc:intB</to>
+      </copy>
+      <copy>
+      	<from variable="multiRequestElement2"/>
+      	<to variable="multiRequest2" part="parameters"/>
+      </copy>
+    </assign>
+
+	<invoke
+        name="InvokeMultiplication1"
+        partnerLink="MultiplyLink"
+        operation="Multiply"
+        inputVariable="multiRequest1"
+        outputVariable="multiResponse1">
+        <source>
+          <source name="discountedPricesLink" />
+        </source>
+    </invoke>
+    <invoke
+        name="InvokeMultiplication2"
+        partnerLink="MultiplyLink"
+        operation="Multiply"
+        inputVariable="multiRequest2"
+        outputVariable="multiResponse2">  
+        <source>
+          <source name="discountedPricesLink" />
+        </source>
+    </invoke>  
+        
+    <assign name="ParseMultiResponse1">
+    	<copy>
+    		<from variable="multiResponse1" part="parameters"/>
+    		<to variable="multiResponseElement1"/>
+    	</copy>
+    	<copy>
+    		<from>$multiResponseElement1/calc:MultiplyResult</from>
+    		<to>$addend1</to>
+    	</copy>
+    </assign> 
+
+    <assign name="ParseMultiResponse2">
+    	<copy>
+    		<from variable="multiResponse2" part="parameters"/>
+    		<to variable="multiResponseElement2"/>
+    	</copy>
+    	<copy>
+    		<from>$multiResponseElement2/calc:MultiplyResult</from>
+    		<to>$addend2</to>
+    	</copy>
+    </assign> 
+
+    <assign name="InitAddRequest">
+      <copy>
+        <from>
+        	<literal>
+        		<calc:Add>
+        			<calc:intA></calc:intA>
+        			<calc:intB></calc:intB>
+        		</calc:Add>
+        	</literal>
+        </from>
+        <to variable="addRequestElement" />
+      </copy>
+      <copy>
+      	<from>$addend1</from>
+      	<to>$addRequestElement/calc:intA</to>
+      </copy>
+      <copy>
+      	<from>$addend2</from>
+      	<to>$addRequestElement/calc:intB</to>
+      </copy>
+      <copy>
+      	<from variable="addRequestElement"/>
+      	<to variable="addRequest" part="parameters"/>
+      </copy>
+    </assign>
+
+    <invoke
+        name="InvokeSum"
+        partnerLink="AddLink"
+        operation="Add"
+        inputVariable="addRequest"
+        outputVariable="addResponse" >
+        <targets>
+          <target name="discountedPricesLink" />
+        </targets>  
+    </invoke>
+    <assign name="ParseAddResponse">
+    	<copy>
+    		<from variable="addResponse" part="parameters"/>
+    		<to variable="addResponseElement"/>
+    	</copy>
+    	<copy>
+    		<from>$addResponseElement/calc:AddResult</from>
+    		<to>$finalPrice</to>
+    	</copy>
+    </assign> 
+
+
+ 
+
+  <assign name="InitgetPizzaPriceRequest">
+      <copy>
+        <from>
+            <literal>
+              <rec:getPizzaPrice>
+                <rec:PizzaType></rec:PizzaType>
+              </rec:getPizzaPrice>
+            </literal>
+          </from>
+        <to variable="getPizzaPriceRequestElement" />
+      </copy>
+      <copy>
+      	<from>$PizzaType</from>
+      	<to>$getPizzaPriceRequestElement/rec:PizzaType</to>
+      </copy>
+      <copy>
+      	<from variable="getPizzaPriceRequestElement"/>
+      	<to variable="getPizzaPriceRequest" part="getPizzaPrice"/>
+      </copy>
+    </assign>
+
+    <invoke
+        name="InvokegetPizzaPrice"
+        partnerLink="getPizzaPriceLinkType"
+        operation="getPizzaPrice"
+        inputVariable="getPizzaPriceRequest"
+        outputVariable="getPizzaPriceResponse" /> 
+    
+    <assign name="ParsepgetPizzaPriceResponse">
+    	<copy>
+    		<from variable="getPizzaPriceResponse" part="priceDPHResponseType"/>
+    		<to variable="getPizzaPriceResponseElement"/>
+    	</copy>
+    	<copy>
+    		<from>$getPizzaPriceResponseElement/rec:return</from>
+    		<to variable="outputMessage" part="parameters"/>
+    	</copy>
+    </assign>  
+   
+    <reply name="ReplyPizzaProcessOutputs"  
+        partnerLink="PizzaProcessPartnerLink"
+        portType="tnswsdl:PizzaPricePortType" 
+        operation="getPizzaProcess"
+        variable="outputMessage" />
+    
+    
+  </flow>
+  
+</process>
